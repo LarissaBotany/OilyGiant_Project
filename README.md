@@ -1,18 +1,21 @@
 # Qual a melhor região para novos poços de petróleo?
 
+Projeto de Ciência de Dados que usa **regressão linear** e **Bootstrapping** para escolher, entre três regiões, a de maior lucro médio com risco de prejuízo inferior a 2,5%.
+ 
+> **Resultado em uma linha:** a **Região 1** é a recomendada, com lucro médio de **US$ 4,56 mi**, risco de prejuízo de **1,5%** e intervalo de confiança de 95% totalmente positivo
 
 ## Contexto
 Nesse projeto, atuarei como uma cientista de dados de uma empresa de mineração OilyGiant. Minha tarefa é  **identificar a região com maior margem de lucro** para o desenvolvimento de novos poços de petróleo, usando um modelo de regressão para prever o volume de reservas e a técnica de **Bootstrapping** para avaliar lucro potencial e risco.
 
 ## Objetivos
-Para realizar essa tarefa vou executar os seguintes etapas:
+Para realizar essa tarefa, vou executar as seguintes etapas:
 1. Ler os arquivos com parâmetros coletados de poços de petróleo na região selecionada: a quantidade de petróleo e o volume de reservas;
 2. Construir um modelo para predizer o volume de reservas em novos poços;
 3. Escolher os poços de petróleo que têm os maiores valores estimados;
 4. Escolher, entre as regiões com risco de prejuízo inferior a 2,5%, a de maior lucro médio.
 
 ## Dados
-Tenho em mãos dados sobre amostras de petróleo de três regiões com parâmetros de cada poço de petróleo na região já são conhecidos.
+Tenho em mãos dados sobre amostras de petróleo de três regiões, com parâmetros de cada poço de petróleo na região já conhecidos.
 
 Os dados são sintéticos e não incluem nenhum detalhe de contratos ou características de poços.
 
@@ -26,12 +29,12 @@ Os dados são sintéticos e não incluem nenhum detalhe de contratos ou caracter
 
 ## Condições de negócio
 
-Há algumas condições, que preciso considerar, para encontrar os melhores lugares:
-- Apenas regressão linear deve ser usada para o treinamento do modelo.
+Há algumas condições que preciso considerar para encontrar os melhores lugares:
+- Apenas **regressão linear** deve ser usada para o treinamento do modelo.
 - Ao explorar a região, um estudo de 500 pontos é realizado e os melhores 200 pontos são selecionados para calcular o lucro.
 - O orçamento para o desenvolvimento de 200 poços de petróleo é 100 milhões de dólares.
-- Um barril de petróleo bruto traz 4.5 dólares de receita. A receita de uma unidade de produto é 4.500 dólares (o volume de reservas está em milhares de barris).
-- Depois de ter avaliado os riscos, mantenha apenas as regiões com o risco de perdas inferior a 2.5%. Entre aquelas que se enquadram no critério, você precisa selecionar a região com o lucro médio mais alto.
+- Um barril de petróleo bruto traz 4,5 dólares de receita. A receita de uma unidade de produto é 4.500 dólares (o volume de reservas está em milhares de barris).
+- Depois de ter avaliado os riscos, mantenha apenas as regiões com o risco de perdas inferior a 2,5%. Entre aquelas que se enquadram no critério, você precisa selecionar a região com o lucro médio mais alto.
 
 ## Metodologia
 
@@ -62,12 +65,24 @@ Há algumas condições, que preciso considerar, para encontrar os melhores luga
 **Região recomendada: Região 1**
 ## Conclusão
 
-A **Região 1** é a recomendada: é a única com risco de prejuízo abaixo de 2,5% (1,5%) e também tem o maior lucro médio (US$ 4,56 milhões), com intervalo de confiança de 95% totalmente positivo.
+A **Região 1**  é a única com risco de prejuízo abaixo de 2,5% (1,5%) e também tem o maior lucro médio (US$ 4,56 milhões), com intervalo de confiança de 95% totalmente positivo.
 
 - **Por que o risco difere tanto?** Na Região 1, `f2` tem correlação quase perfeita com `product`, o que resulta em um modelo muito preciso (RMSE de 0,89). Nas Regiões 0 e 2 o RMSE é de cerca de 40 mil barris (~41% do volume médio), e a seleção dos melhores poços é menos confiável.
 - **A análise de risco mudou a decisão.** Selecionando os 200 melhores poços entre todos os da validação, a Região 0 tinha o maior lucro potencial (US$ 33,2 milhões). Porém, esse cenário é otimista e não mede incerteza. Ao simular a exploração de 500 pontos por bootstrapping, as Regiões 0 e 2 ultrapassaram o limite de risco.
 - **Limitações:** os dados são sintéticos, a margem de lucro é pequena frente ao investimento de US$ 100 milhões (~4%), e as diferenças entre os lucros médios das regiões são pequenas, então o critério de risco é o que decide a escolha.
-
+## O que este projeto demonstra (aprendizados e habilidades)
+ 
+- **Avaliação de risco quantitativa:** traduzi um critério de negócio (risco < 2,5%) em uma estimativa de probabilidade de prejuízo via Bootstrapping, com intervalo de confiança de 95%.
+- **Decisão baseada em incerteza, não em média:** mostrei que o maior lucro "potencial" (Região 0) não era a melhor escolha quando o risco foi considerado.
+- **Leitura de negócio dos números:** cálculo do ponto de equilíbrio por poço e comparação do RMSE com o volume médio para julgar a confiabilidade da seleção.
+- **Boas práticas de modelagem:** padronização ajustada só no treino, comparação com um modelo de referência (média do treino) e foco no efeito do erro do modelo sobre a decisão final.
+- 
+## Limitações e próximos passos
+ 
+- Os dados são sintéticos, então os resultados ilustram o método e não valem como previsão real.
+- A margem é pequena frente ao investimento (~4% de US$ 100 mi) e as diferenças entre os lucros médios das regiões são pequenas, então **o critério de risco é o que decide a escolha**.
+- O modelo da Região 1 se apoia em uma única variável quase perfeitamente correlacionada ao alvo; em dados reais, isso mereceria uma checagem de possível vazamento ou redundância.
+- **Próxima melhoria:** uma análise de sensibilidade, variando preço do barril, orçamento e número de poços, para ver em que cenários a recomendação muda.
 ## Como executar
 
 ```bash
@@ -102,4 +117,5 @@ Python, pandas, NumPy, scikit-learn, matplotlib/seaborn, Jupyter.
 ## Autora
 Larissa Areal de Carvalho Muller
 
-Esse projeto faz parte dos projetos desenvolvidos durante bootcamp de Ciência de Dados.
+Projeto desenvolvido durante o bootcamp de Ciência de Dados TripleTen
+
